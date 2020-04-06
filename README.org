@@ -1,0 +1,87 @@
+* Markdownify
+** Installation and Setup
+*** prerequisites
+ #+NAME: nodejs-version
+ #+BEGIN_SRC shell
+   node --version
+   npm --version
+ #+END_SRC
+
+ #+RESULTS: nodejs-version
+ | v10.15.2 |
+ |   6.14.4 |
+
+*** project setup
+
+    #+BEGIN_SRC 
+    mkdir markdownify
+    cd markdownify
+    npm init
+   
+    sudo npm install -g shadow-cljs
+    npm install --save-dev shadow-cljs
+    shadow-cljs init
+    #+END_SRC
+*** edit main.cljs
+    #+BEGIN_SRC 
+    mkdir -p src/main/markdownify/    
+    touch src/main/markdownify/main.cljs
+    #+END_SRC
+
+    #+BEGIN_SRC
+    (ns markdownify.main)
+
+    (defn main! []
+      (println "Welcome to the app!"))
+
+    (defn reload! []
+      (println "Reloaded!")) 
+    #+END_SRC
+
+*** edit shadow-cljs.edn
+    #+BEGIN_SRC
+    :dev-http
+    {9090 "public/"}
+
+    :builds
+    {:app {:output-dir "public/compiledjs/"
+           :asset-path "compiledjs"
+           :target :browser
+           :modules {:main {:init-fn markdownify.main/main!}}
+           :devtools {:after-load markdownify.main/reload!}}}
+    #+END_SRC
+
+*** edit index.html
+    #+BEGIN_SRC 
+    mkdir public
+    touch public/index.html
+    #+END_SRC
+
+    #+BEGIN_SRC
+    <body>
+    <script src="/compiledjs/main.js"></script>
+    </body>
+    #+END_SRC
+
+*** start shadowCLJS
+    #+BEGIN_SRC 
+    shadow-cljs watch app
+    #+END_SRC
+
+    #+BEGIN_SRC 
+    http://localhost:9090
+    #+END_SRC
+*** initialize repo
+    #+BEGIN_SRC
+    git init
+    touch .gitignore
+    # edit .gitignore
+    git add .
+    git commit 
+    #+END_SRC
+** Creating the basic markdown editor
+*** auto-reload
+    - add reagent dependency
+    - require reagent and add mount function
+    - add mount tag to index.html
+    - setup for auto-reloading
