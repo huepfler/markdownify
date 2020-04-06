@@ -1,10 +1,37 @@
 (ns markdownify.main
   (:require [reagent.core :as reagent]
-            [reagent.dom :as dom]))
+            [reagent.dom :as dom]
+            ["showdown" :as showdown]))
 
+
+(defonce markdown (reagent/atom ""))
+
+(defonce showdown-converter (showdown/Converter.))
+
+(defn md->html [md]
+  (.makeHtml showdown-converter md))
 
 (defn app []
-  [:h1 "Hi, there!"])
+  [:div
+   [:h1 "Hi, there!"]
+   [:div
+    {:style {:display :flex}}
+    [:div
+     {:style {:flex "1"}}
+     [:h2 "Markdown"]
+     [:textarea
+      {:on-change #(reset! markdown (-> % .-target .-value))
+       :value @markdown
+       :style {:resize "none"
+               :height "500px"
+               :width "100%"}}]]
+
+    [:div
+     {:style {:flex "1"
+              :padding-left "2em"}}
+     [:h2 "HTML Preview"]
+     [:div {:style {:height "500px"}
+            :dangerouslySetInnerHTML {:__html (md->html @markdown)}}]]]])
 
 
 ;;
